@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Expense Tracker</title>
+  <!-- Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="gradient-bg text-white py-8">
+    <div class="max-w-6xl mx-auto px-6">
+      <h1 class="text-4xl font-bold text-center mb-2">Smart Expense Tracker</h1>
+      <p class="text-center text-gray-200">AI-powered financial insights</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Input Section -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Add Expense</h2>
+          <form id="expense-form" class="space-y-4">
+            <input type="text" id="description" placeholder="Description"
+              class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+
+            <input type="number" id="amount" placeholder="Amount (₹)" step="0.01"
+              class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+
+            <select id="category" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="Food">🍕 Food</option>
+              <option value="Travel">✈️ Travel</option>
+              <option value="Shopping">🛍️ Shopping</option>
+              <option value="Entertainment">🎬 Entertainment</option>
+              <option value="Healthcare">🏥 Healthcare</option>
+              <option value="Education">📚 Education</option>
+              <option value="Bills">💡 Bills</option>
+              <option value="Other">📦 Other</option>
+            </select>
+
+            <input type="date" id="date" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200">
+              Add Expense
+            </button>
+          </form>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover mt-6">
+          <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Stats</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Expenses:</span>
+              <span class="font-bold text-red-600" id="total-expenses">₹0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">This Month:</span>
+              <span class="font-bold text-blue-600" id="month-expenses">₹0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Average/Day:</span>
+              <span class="font-bold text-green-600" id="avg-daily">₹0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Entries:</span>
+              <span class="font-bold text-purple-600" id="total-entries">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="lg:col-span-2">
+        <!-- ML Predictions -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover mb-6">
+          <h3 class="text-xl font-semibold mb-4 text-gray-800">AI Predictions & Insights</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gradient-to-r from-green-100 to-green-200 p-4 rounded-lg">
+              <h4 class="font-semibold text-green-800">Next Month Prediction</h4>
+              <p class="text-2xl font-bold text-green-700" id="next-month-prediction">₹0.00</p>
+              <p class="text-sm text-green-600" id="prediction-confidence">Calculating...</p>
+            </div>
+            <div class="bg-gradient-to-r from-blue-100 to-blue-200 p-4 rounded-lg">
+              <h4 class="font-semibold text-blue-800">Spending Trend</h4>
+              <p class="text-lg font-bold text-blue-700" id="spending-trend">📈 Stable</p>
+              <p class="text-sm text-blue-600" id="trend-description">Analyzing patterns...</p>
+            </div>
+            <div class="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg">
+              <h4 class="font-semibold text-purple-800">Top Category</h4>
+              <p class="text-lg font-bold text-purple-700" id="top-category">None</p>
+              <p class="text-sm text-purple-600" id="category-percentage">0%</p>
+            </div>
+            <div class="bg-gradient-to-r from-orange-100 to-orange-200 p-4 rounded-lg">
+              <h4 class="font-semibold text-orange-800">Weekly Average</h4>
+              <p class="text-lg font-bold text-orange-700" id="weekly-avg">₹0.00</p>
+              <p class="text-sm text-orange-600" id="weekly-change">vs last week</p>
+            </div>
+          </div>
+
+          <div class="mt-4 flex space-x-2">
+            <button id="predict-btn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all">
+              🔮 Update Predictions
+            </button>
+            <button id="analyze-btn" class="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all">
+              📊 Analyze Spending
+            </button>
+          </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover mb-6">
+          <h3 class="text-xl font-semibold mb-4 text-gray-800">Spending Analysis</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <canvas id="categoryChart" width="300" height="300"></canvas>
+            </div>
+            <div>
+              <canvas id="trendChart" width="300" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expenses Table -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Recent Expenses</h3>
+            <div class="flex space-x-2">
+              <input type="text" id="search-filter" placeholder="Search expenses..." 
+                class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+              <select id="category-filter" class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">All Categories</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Education">Education</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+              </select>
+              <button id="clear-all" class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-600 transition-colors">
+                Clear All
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b-2 border-gray-200">
+                  <th class="py-3 px-2 font-semibold text-gray-700">Date</th>
+                  <th class="py-3 px-2 font-semibold text-gray-700">Description</th>
+                  <th class="py-3 px-2 font-semibold text-gray-700">Amount</th>
+                  <th class="py-3 px-2 font-semibold text-gray-700">Category</th>
+                  <th class="py-3 px-2 font-semibold text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expense-table-body">
+                <!-- JS will populate rows here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Custom JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
